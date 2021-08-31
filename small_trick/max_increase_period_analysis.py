@@ -24,6 +24,13 @@ def rank_stock_by_increase(data_former, data_latter, ignore=False, drop_nan=Fals
     data_latter.sort_values(by=["涨幅_排行"], ascending=False, inplace=True)
     if drop_nan:
         data_latter = data_latter.dropna(axis=0, how='any')
+    if ignore:
+        del_code = []
+        for index in data_latter.index:
+            ts_code = data_latter['ts_code'][index]
+            if ts_code[0:3] == '300' or ts_code[0:3] == '688':
+                del_code.append(index)
+        data_latter = data_latter.drop(del_code, axis=0)
     return data_latter
 
 
@@ -51,7 +58,7 @@ if __name__ == '__main__':
                                                 'introduction,main_business,business_scope')
     all_company_info.index = all_company_info['ts_code']
 
-    anchor_day = '2021-06-25'
+    anchor_day = '2021-03-25'
     anchor_day = datetime.date(*map(int, anchor_day.split('-')))
     anchor_day_next = anchor_day + datetime.timedelta(days=1)
     anchor_before = anchor_day + datetime.timedelta(days=-40)
